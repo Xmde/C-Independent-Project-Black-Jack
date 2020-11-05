@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <cstdlib>
+#include <time.h>
 
 using namespace std;
 
@@ -47,50 +48,59 @@ string toCards(int card){
     }
 }
 
-//funtion to see if a player has busted.
-bool checkBust(vector<int> hand){
-    int total = 0;
-    for(int i = 0; i < hand.size(); i++){
-        total += hand[i];
+int cardAmount(int card){
+    switch(card) {
+        case 1:
+            return 1;
+        case 2:
+            return 2;
+        case 3:
+            return 3;
+        case 4:
+            return 4;
+        case 5:
+            return 5;
+        case 6:
+            return 6;
+        case 7:
+            return 7;
+        case 8:
+            return 8;
+        case 9:
+            return 9;
+        case 10:
+            return 10;
+        case 11:
+            return 10;
+        case 12:
+            return 10;
+        case 13:
+            return 10;
     }
-    if(total > 21){
-        return true;
-    }
-    return false;
 }
 
 //function that returns the total value of the players hand.
 int totalCards(vector<int> hand){
     int total = 0;
     for(int i = 0; i < hand.size(); i++){
-        total += hand[i];
+        total += cardAmount(hand[i]);
     }
     return total;
 }
 
+//funtion to see if a player has busted.
+bool checkBust(vector<int> hand){
+    return totalCards(hand) > 21;
+}
+
 //Function to see if the dealer wins. It takes in two players hands. A Player and a dealer.
 bool dealerWins(vector<int> playerHand, vector<int> dealerHand){
-    int playerTotal = 0;
-    int dealerTotal = 0;
-    for(int i = 0; i < playerHand.size(); i++){
-        playerTotal += playerHand[i];
-    }
-    for(int i = 0; i < dealerHand.size(); i++){
-        dealerTotal += dealerHand[i];
-    }
-    return dealerTotal >= playerTotal;
+    return totalCards(dealerHand) >= totalCards(playerHand);
 }
 
 //Function to see if the dealer should hit to stay.
 bool dealerHits(vector<int> dealerHand){
-    int total = 0;
-    for(int i = 0; i < dealerHand.size(); i++){
-        total += dealerHand[i];
-    }
-    if(total < 17){
-        return true;
-    }
-    return false;
+    return totalCards(dealerHand) < 17;
 }
 
 int main() {
@@ -115,6 +125,12 @@ int main() {
     //The main area of the game logic.
 
     game:
+
+    //Clears the vector to prevent errors when playing game again.
+    playersHands.clear();
+
+    //Inits the rand function using the time for a seed to prevent the same numbers for pooping up
+    srand(time(NULL));
 
     cout << "Welcome, today we will be playing Black Jack. How many people want to go against the dealer? ";
     cin >> usr;
@@ -199,8 +215,16 @@ int main() {
         }
     }
 
-    cout << "\nEnter anything to Exit";
+    endgamequestion:
+    cout << "\nDo you want to play Again(Y/N)? ";
     cin >> usr;
-    exit(0);
+    if(toUpperCase(usr) == "N"){
+        exit(0);
+    } else if (toUpperCase(usr) == "Y"){
+        goto game;
+    } else {
+        cout << "Please enter either Y for Yes or N for No.";
+        goto endgamequestion;
+    }
 
 }
